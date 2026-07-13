@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}機器一覧 - guidestore{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h2 class="page-title">機器一覧</h2>
+  <div class="spacer"></div>
+  <button class="btn" id="btn-new-item">＋ 追加</button>
+</div>
+
+<div class="card" style="padding:12px 14px; margin-bottom:12px">
+  <div class="field-row">
+    <div class="field">
+      <label for="filter-q">機器名で検索</label>
+      <div class="search-wrap">
+        <input type="text" id="filter-q" placeholder="例: Dyson">
+        <button type="button" class="search-clear-btn" id="filter-q-clear" aria-label="検索をクリア">×</button>
+      </div>
+    </div>
+    <div class="field">
+      <label for="filter-tag">タグ</label>
+      <select id="filter-tag">
+        <option value="">すべてのタグ</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div id="list-alert" class="alert" style="display:none"></div>
+
+<div class="card" style="padding:0; overflow:hidden">
+  <table class="items-table">
+    <thead>
+      <tr>
+        <th>機器名</th>
+        <th>タグ</th>
+        <th>エントリ</th>
+        <th>最終更新</th>
+      </tr>
+    </thead>
+    <tbody id="items-tbody">
+      <tr><td colspan="4" class="muted" style="padding:20px">読み込み中…</td></tr>
+    </tbody>
+  </table>
+  <div id="items-empty" class="empty-state" style="display:none; min-height:20vh">
+    機器が登録されていません
+  </div>
+</div>
+
+<!-- 新規機器モーダル -->
+<div class="modal-overlay" id="new-item-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 class="modal-title">機器を追加</h3>
+      <button class="modal-close" id="new-item-modal-close" aria-label="閉じる">×</button>
+    </div>
+    <form id="new-item-form">
+      <div class="modal-body">
+        <p id="new-item-error" style="color:var(--danger); font-size:13px; margin:0 0 10px"></p>
+        <div class="field">
+          <label for="new-item-name">機器名 <span class="required">*</span></label>
+          <input type="text" id="new-item-name" placeholder="例: Dyson V15 掃除機" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="new-item-memo">メモ（任意）</label>
+          <input type="text" id="new-item-memo" placeholder="例: リビング保管" autocomplete="off">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="new-item-cancel">キャンセル</button>
+        <button type="submit" class="btn">登録</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/items_list.js') }}?v={{ static_v }}"></script>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}機器詳細 - guidestore{% endblock %}
+{% block content %}
+<script>const ITEM_ID = {{ item_id }};</script>
+
+<div style="margin-bottom:16px">
+  <a href="{{ url_for('items.items_list') }}" class="btn btn-secondary btn-sm">← 機器一覧</a>
+</div>
+
+<div id="detail-spinner" class="empty-state muted">読み込み中…</div>
+<div id="detail-error" class="alert alert-error" style="display:none"></div>
+
+<!-- 機器ヘッダーカード -->
+<div class="card" id="item-header-card" style="display:none">
+  <div id="item-view-mode">
+    <div class="page-header" style="margin-bottom:10px">
+      <h2 class="page-title" id="detail-name-display" style="min-width:0; flex:1; word-break:break-word"></h2>
+      <div class="spacer"></div>
+      <button class="btn btn-secondary btn-sm" id="btn-edit-item">編集</button>
+      <button class="btn btn-danger btn-sm" id="btn-delete-item">削除</button>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:8px">
+      <div class="chip-list" id="detail-tags-list"></div>
+      <div style="position:relative; display:inline-block">
+        <button class="btn btn-secondary btn-sm" id="btn-add-tag" style="padding:4px 10px; border-radius:12px">＋ タグ</button>
+        <div class="add-tag-popup" id="add-tag-popup" style="display:none; position:absolute; left:0; top:calc(100% + 4px); z-index:100; white-space:nowrap">
+          <input type="text" id="add-tag-input" placeholder="タグ名" style="width:120px">
+          <button class="btn btn-sm" id="btn-add-tag-confirm">追加</button>
+        </div>
+      </div>
+    </div>
+    <div id="detail-memo-display" class="muted" style="font-size:13.5px; margin-bottom:4px"></div>
+    <div id="detail-created" class="muted" style="font-size:12px"></div>
+  </div>
+
+  <div id="item-edit-mode" style="display:none">
+    <div class="field">
+      <label for="edit-name-input">機器名 <span class="required">*</span></label>
+      <input type="text" id="edit-name-input" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="edit-memo-input">メモ</label>
+      <input type="text" id="edit-memo-input" placeholder="任意のメモ" autocomplete="off">
+    </div>
+    <div style="display:flex; gap:8px">
+      <button class="btn" id="btn-save-item-edit">保存</button>
+      <button class="btn btn-secondary" id="btn-cancel-item-edit">キャンセル</button>
+    </div>
+  </div>
+</div>
+
+<!-- エントリカード -->
+<div class="card" id="entries-card" style="display:none">
+  <div class="card-header">
+    <h3 class="card-title">エントリ</h3>
+  </div>
+
+  <div id="entries-list"></div>
+  <div id="entries-empty" class="muted" style="display:none; padding:16px 0; font-size:14px">
+    エントリがまだありません
+  </div>
+
+  <div class="chat-post-form">
+    <div class="entry-tabs">
+      <button class="tab-btn active" data-tab="text">テキスト</button>
+      <button class="tab-btn" data-tab="url">URL</button>
+      <button class="tab-btn" data-tab="file">ファイル</button>
+    </div>
+
+    <div id="tab-text">
+      <textarea id="text-input" rows="3"
+                placeholder="テキストを入力… (Ctrl+Enter で送信)"
+                style="resize:vertical; width:100%; margin-bottom:0"></textarea>
+    </div>
+    <div id="tab-url" style="display:none">
+      <input type="url" id="url-input" placeholder="https://…">
+    </div>
+    <div id="tab-file" style="display:none">
+      <div class="file-drop-zone" id="file-drop-zone">
+        <div>ファイルをドロップ、またはクリックして選択</div>
+        <div class="file-selected-name" id="file-selected-name"></div>
+        <input type="file" id="file-input" style="display:none">
+      </div>
+    </div>
+
+    <div class="field" style="margin-top:10px; margin-bottom:8px">
+      <label for="entry-memo">メモ（任意）</label>
+      <input type="text" id="entry-memo" placeholder="このエントリへのメモ">
+    </div>
+    <div style="display:flex; justify-content:flex-end">
+      <button class="btn" id="btn-add-entry">追加</button>
+    </div>
+  </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/item_detail.js') }}?v={{ static_v }}"></script>
+{% endblock %}
