@@ -10,7 +10,7 @@
 <div class="card" style="padding:12px 14px; margin-bottom:12px">
   <div class="field-row">
     <div class="field">
-      <label for="filter-q">機器名で検索</label>
+      <label for="filter-q">機器名・メモで検索</label>
       <div class="search-wrap">
         <input type="text" id="filter-q" placeholder="例: Dyson">
         <button type="button" class="search-clear-btn" id="filter-q-clear" aria-label="検索をクリア">×</button>
@@ -33,12 +33,13 @@
       <tr>
         <th>機器名</th>
         <th>タグ</th>
+        <th>メモ</th>
         <th>エントリ</th>
         <th>最終更新</th>
       </tr>
     </thead>
     <tbody id="items-tbody">
-      <tr><td colspan="4" class="muted" style="padding:20px">読み込み中…</td></tr>
+      <tr><td colspan="5" class="muted" style="padding:20px">読み込み中…</td></tr>
     </tbody>
   </table>
   <div id="items-empty" class="empty-state" style="display:none; min-height:20vh">

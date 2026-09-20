@@ -179,6 +179,11 @@ a { color: inherit; text-decoration: none; }
 
 .card-header .spacer { flex: 1; }
 
+.card-danger-zone {
+  border-color: #f3c9c7;
+  background: #fffaf9;
+}
+
 /* --- form elements --- */
 
 .field {
@@ -313,6 +318,12 @@ input:focus, select:focus, textarea:focus {
 
 .items-table tr:hover td { background: var(--row-hover); cursor: pointer; }
 .items-table tr.active td { background: var(--active-bg); }
+
+.items-table .memo-cell {
+  white-space: normal;
+  word-break: break-word;
+  max-width: 220px;
+}
 
 /* --- master-detail 2ペイン --- */
 
@@ -559,6 +570,14 @@ input:focus, select:focus, textarea:focus {
 
 .entry-card:last-child { border-bottom: none; }
 
+.entry-left {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .entry-type-badge {
   flex: 0 0 auto;
   font-size: 11px;
@@ -606,6 +625,7 @@ input:focus, select:focus, textarea:focus {
 .entry-actions {
   flex: 0 0 auto;
   display: flex;
+  flex-direction: column;
   gap: 2px;
   align-items: flex-start;
 }
@@ -800,4 +820,6 @@ input:focus, select:focus, textarea:focus {
 
   .master-detail.detail-open .md-detail-pane { display: flex; }
   .master-detail.detail-open .md-list-pane { display: none; }
+
+  .items-table .memo-cell { max-width: 120px; }
 }

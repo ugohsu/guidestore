@@ -42,14 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
 async function loadItemDetail(itemId) {
   showDetailSpinner();
   try {
-    const [item, entries] = await Promise.all([
+    const [item, entries, allTags] = await Promise.all([
       apiFetch(`/api/items/${itemId}`),
       apiFetch(`/api/items/${itemId}/entries`),
+      apiFetch('/api/tags'),
     ]);
     renderDetailHeader(item);
     renderEntries(entries);
     initItemEditing(item);
-    initTagManagement(item);
+    initTagManagement(item, allTags);
     initDeleteItem(item);
     hideDetailSpinner();
   } catch (e) {
@@ -68,6 +69,7 @@ function renderDetailHeader(item) {
   renderDetailTags(item);
   document.getElementById('item-header-card').style.display = '';
   document.getElementById('entries-card').style.display = '';
+  document.getElementById('danger-zone-card').style.display = '';
   document.title = item.name + ' - guidestore';
 }
 
@@ -97,7 +99,13 @@ function renderEntryHtml(e) {
   const memoText = e.memo ? `メモ: ${escapeHtml(e.memo)}` : '';
 
   return `<div class="entry-card" data-entry-id="${e.id}">
-    <span class="entry-type-badge ${badgeClass}">${badgeLabel}</span>
+    <div class="entry-left">
+      <span class="entry-type-badge ${badgeClass}">${badgeLabel}</span>
+      <div class="entry-actions">
+        <button class="btn btn-text btn-sm memo-toggle-btn" data-id="${e.id}">メモ</button>
+        <button class="btn btn-danger btn-sm entry-delete-btn" data-id="${e.id}">削除</button>
+      </div>
+    </div>
     <div class="entry-body">
       <div class="entry-content">${entryContentHtml(e)}</div>
       <div class="entry-footer">
@@ -111,10 +119,6 @@ function renderEntryHtml(e) {
           <button class="btn btn-text btn-sm memo-cancel-btn" data-id="${e.id}">×</button>
         </div>
       </div>
-    </div>
-    <div class="entry-actions">
-      <button class="btn btn-text btn-sm memo-toggle-btn" data-id="${e.id}">メモ</button>
-      <button class="btn btn-danger btn-sm entry-delete-btn" data-id="${e.id}">削除</button>
     </div>
   </div>`;
 }
@@ -300,7 +304,9 @@ function initItemEditing(item) {
 
 // --- タグ管理 ---
 
-function initTagManagement(item) {
+function initTagManagement(item, allTags) {
+  populateTagSuggestions(allTags);
+
   document.getElementById('detail-tags-list').addEventListener('click', async e => {
     const btn = e.target.closest('.chip-remove-tag');
     if (!btn) return;
@@ -333,6 +339,12 @@ function initTagManagement(item) {
   input?.addEventListener('keydown', e => { if (e.key === 'Enter') doAddTag(item); });
 }
 
+function populateTagSuggestions(allTags) {
+  const list = document.getElementById('tag-suggestions');
+  if (!list) return;
+  list.innerHTML = allTags.map(t => `<option value="${escapeHtml(t.name)}"></option>`).join('');
+}
+
 async function doAddTag(item) {
   const input = document.getElementById('add-tag-input');
   const name = input.value.trim();
@@ -341,6 +353,10 @@ async function doAddTag(item) {
     const tag = await apiPostJson(`/api/items/${item.id}/tags`, { name });
     if (!item.tags.some(t => t.id === tag.id)) item.tags.push(tag);
     renderDetailTags(item);
+    const list = document.getElementById('tag-suggestions');
+    if (list && !Array.from(list.options).some(o => o.value === tag.name)) {
+      list.insertAdjacentHTML('beforeend', `<option value="${escapeHtml(tag.name)}"></option>`);
+    }
     input.value = '';
     document.getElementById('add-tag-popup').style.display = 'none';
   } catch (e) { alert(e.message); }
@@ -363,6 +379,7 @@ function initDeleteItem(item) {
 function showDetailSpinner() {
   document.getElementById('item-header-card').style.display = 'none';
   document.getElementById('entries-card').style.display = 'none';
+  document.getElementById('danger-zone-card').style.display = 'none';
   document.getElementById('detail-spinner').style.display = '';
   document.getElementById('detail-error').style.display = 'none';
 }

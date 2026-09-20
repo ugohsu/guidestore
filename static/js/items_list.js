@@ -37,7 +37,10 @@ function renderItemList() {
   const tagId = document.getElementById('filter-tag')?.value || '';
 
   let items = allItems;
-  if (q) items = items.filter(it => it.name.toLowerCase().includes(q));
+  if (q) items = items.filter(it =>
+    it.name.toLowerCase().includes(q) ||
+    (it.memo || '').toLowerCase().includes(q)
+  );
   if (tagId) items = items.filter(it => it.tags.some(t => String(t.id) === tagId));
 
   const tbody = document.getElementById('items-tbody');
@@ -53,9 +56,11 @@ function renderItemList() {
   tbody.innerHTML = items.map(it => {
     const tagsHtml = it.tags.map(t => `<span class="chip">${escapeHtml(t.name)}</span>`).join(' ');
     const lastUpdate = it.last_pushed_at ? formatJst(it.last_pushed_at) : '—';
+    const memoText = it.memo ? escapeHtml(it.memo) : '';
     return `<tr data-href="/items/${it.id}" style="cursor:pointer">
       <td><a href="/items/${it.id}" style="font-weight:500">${escapeHtml(it.name)}</a></td>
       <td>${tagsHtml}</td>
+      <td class="muted memo-cell" style="font-size:12.5px">${memoText}</td>
       <td><span class="badge">${it.entry_count}</span></td>
       <td class="muted" style="font-size:12.5px; white-space:nowrap">${lastUpdate}</td>
     </tr>`;
